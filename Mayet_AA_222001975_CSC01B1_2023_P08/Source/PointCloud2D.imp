@@ -1,0 +1,129 @@
+#include <iostream>
+#include <sstream>
+#include <cassert>
+
+using namespace std;
+
+//Default constructor
+template <typename T>
+PointCloud2D<T>::PointCloud2D() : PointCloud2D(NUM_ROWS, NUM_COLS, INITIAL_VALUE){
+    
+}
+
+//constructor
+template <typename T>
+PointCloud2D<T>::PointCloud2D(int intRows, int intCols, int initValue)
+{
+    allocMemory(intRows, intCols, initValue);
+}
+
+//copy constructor
+template <typename T>
+PointCloud2D<T>::PointCloud2D(const PointCloud2D& objOriginal)
+{
+    allocMemory(objOriginal._rows, objOriginal._cols, INITIAL_VALUE);
+    clone(objOriginal);
+}
+
+//destructor
+template <typename T>
+PointCloud2D<T>::~PointCloud2D()
+{
+    deallocMemory();
+}
+
+// alloc Memory
+template <typename T>
+void PointCloud2D<T>::allocMemory(int intRows, int intCols, int initValue)
+{
+    _rows = intRows;
+    _cols = intCols;
+    _data = new UJRow<T>*[intRows];
+    
+    for(int r = 0; r < intRows; r++)
+    {
+        _data[r] = new UJRow<T>(intCols, initValue);
+    }
+}
+
+// dealloc Memory
+template <typename T>
+void PointCloud2D<T>::deallocMemory()
+{
+    delete [] _data;
+}
+
+// clone function
+template <typename T>
+void PointCloud2D<T>::clone(const PointCloud2D<T>& objOriginal)
+{
+    assert(_rows == objOriginal._rows);
+    assert(_cols == objOriginal._cols);
+    
+    for(int r = 0; r < _rows; r++)
+    {
+        for(int c = 0; c < _cols; c++)
+        {
+            //Overloaded Indexing Operator
+            _data[r][c] = objOriginal._data[r][c];
+        }
+    }
+}
+
+//get rows asseccor
+template <typename T>
+int PointCloud2D<T>::getRows() const
+{
+    return _rows;
+}
+
+//get cols asseccor
+template <typename T>
+int PointCloud2D<T>::getCols() const
+{
+    return _cols;
+}
+
+// = Operator Overloading
+template <typename T>
+const PointCloud2D<T>& PointCloud2D<T>::operator=(const PointCloud2D<T>& objRHS)
+{
+    if(this != &objRHS)
+    {
+        deallocMemory();
+        allocMemory(objRHS.getRows(), objRHS.getCols(), INITIAL_VALUE);
+        clone(objRHS);
+    }
+    
+    return *this;
+}
+
+// [] operator overloading
+template <typename T>
+PointCloud2D<T>& PointCloud2D<T>::operator[] (int intIndex)
+{
+    return *_data[intIndex];
+}
+
+// << Operator Overloading
+template <typename T1>
+ostream& operator<<(ostream& osLHS, const PointCloud2D<T1>& objRHS)
+{
+    for(int r = 0; r < objRHS.getRows(); r++)
+    {
+        for(int c = 0; c < objRHS.getCols(); c++)
+        {
+            //Overloaded Indexing Operator
+            osLHS << (*objRHS._data[r])[c] << " ";
+        }
+        
+        osLHS << endl;
+    }
+    
+    return osLHS;
+}
+
+
+
+
+

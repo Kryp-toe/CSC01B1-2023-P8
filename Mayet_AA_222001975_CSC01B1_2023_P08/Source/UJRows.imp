@@ -1,0 +1,81 @@
+#include <iostream>
+#include <sstream>
+
+using namespace std;
+
+
+//Defualt Constructor
+template <typename T>
+UJRow<T>::UJRow()
+{
+    alloc(DEFAULT_ROWS,INITIAL_VALUE);
+}
+
+//Parameter constructor
+template <typename T>
+UJRow<T>::UJRow(int intRows, T tDefault)
+{
+    alloc(intRows, tDefault);
+}
+
+//Copy constructor
+template <typename T>
+UJRow<T>::UJRow(const UJRow<T>& objOriginal):UJRow(objOriginal._rows, objOriginal._data[0])
+{
+    clone(objOriginal);
+}
+
+//Destructor
+template <typename T>
+UJRow<T>::~UJRow()
+{
+    dealloc();
+}
+
+//Accessor function
+template <typename T>
+int UJRow<T>::getRows() const
+{
+    return _rows;
+}
+
+// [] operator overloading
+template <typename T>
+T& UJRow<T>::operator[] (int intIndex)
+{
+    return _data[intIndex];
+}
+
+// clone helper function
+template <typename T>
+void UJRow<T>::clone(const UJRow<T>& objOriginal)
+{
+    for(int r=0; r<objOriginal._rows; r++)
+    {
+        _data[r] = objOriginal._data[r];
+    }
+}
+
+// alloc helper function
+template <typename T>
+void UJRow<T>::alloc(int intRows, T tDefault)
+{
+    _rows = intRows;
+    _data = new T[intRows];
+    
+    for(int r=0; r<intRows; r++)
+    {
+        _data[r] = tDefault;
+    }
+}
+
+// dealloc helper function
+template <typename T>
+void UJRow<T>::dealloc()
+{
+    delete[] _data;
+}
+
+
+
+
